@@ -1,19 +1,21 @@
-# OME-TIFF Batch Converter - Standalone Version
+# Montage Blend and Convert
 
-A GUI application for batch conversion of SerialEM montages (.mrc files) to OME-TIFF format with proper calibration and BigDataViewer-compatible HDF5 files for large images.
+A GUI application that blends SerialEM montages (.mrc + .mdoc) with IMOD and writes calibrated, pyramidal OME-TIFF, with optional BigDataViewer-compatible HDF5 and reduced-resolution derivatives for very large montages.
+
+![The batch converter interface](screenshot.png)
 
 ## What it does
 
 This tool processes SerialEM montage files (.mrc + .mdoc) and converts them to:
 - **OME-TIFF files** with correct pixel size calibration and pyramidal structure (always created)
-- **HDF5 files** (optional) for images >2G pixels, compatible with ImageJ BigDataViewer
-- **Reduced resolution TIFF files** (optional) for large images - can be created independently of HDF5
+- **HDF5 files** (optional, any image size), compatible with ImageJ BigDataViewer
+- **Reduced resolution TIFF files** (optional) for montages above 1.5G pixels - can be created independently of HDF5
 
 The processing includes:
 1. Montage blending using IMOD tools (extractpieces + blendmont)
 2. Conversion to calibrated OME-TIFF with pyramid levels (always created)
-3. Optional HDF5 creation for large images (>2G pixels)
-4. Optional reduced resolution TIFF creation for large images (independent of HDF5)
+3. Optional HDF5 creation, independent of image size
+4. Optional reduced resolution TIFF creation for montages above 1.5G pixels
 
 ## Prerequisites
 
@@ -88,9 +90,8 @@ This will check:
 1. **Select Folder**: Choose folder containing .mrc files
 2. **Options**:
    - ✅ **Recursive**: Search subfolders for .mrc files
-   - **For large images (>2G pixels):**
-     - ✅ **Create H5 file**: Creates HDF5 files compatible with BigDataViewer
-     - ✅ **Create reduced resolution TIFF**: Creates downsampled TIFF files
+   - ✅ **Create H5 file**: Creates HDF5 files compatible with BigDataViewer (any image size)
+   - ✅ **Create reduced resolution TIFF**: Creates downsampled TIFF files, for montages above 1.5G pixels only
    - **Note**: Both options are independent - you can select none, one, or both
 
 3. **Processing**: Click "Start Batch Processing"
@@ -102,11 +103,11 @@ For each input file `image.mrc`, the tool creates:
 **Always created:**
 - `image.ome.tif` - Original resolution OME-TIFF with calibration
 
-**For large images (>2G pixels), optional files:**
-- `image.h5` + `image.xml` - HDF5 format for BigDataViewer (if "Create H5 file" is checked)
-- `image_reduced.ome.tif` - Reduced resolution TIFF (if "Create reduced resolution TIFF" is checked)
+**Optional files:**
+- `image.h5` + `image.xml` - HDF5 format for BigDataViewer, any image size (if "Create H5 file" is checked)
+- `image_reduced.ome.tif` - Reduced resolution TIFF, montages above 1.5G pixels only (if "Create reduced resolution TIFF" is checked)
 
-**Note**: For large images, you can choose to create:
+**Note**: you can choose to create:
 - Only HDF5 files
 - Only reduced resolution TIFF
 - Both HDF5 and reduced TIFF
@@ -171,7 +172,8 @@ The .mdoc file must contain a `PixelSpacing` entry for calibration.
 2. Blend montage using IMOD `blendmont`
 3. Convert to OME-TIFF with proper calibration
 4. Generate pyramid levels for efficient viewing
-5. Optional HDF5 creation for large images
+5. Optional HDF5 creation, independent of image size
+6. Optional reduced resolution TIFF for montages above 1.5G pixels, downsampled towards a 1G pixel target
 
 ### Calibration
 - Pixel size read from .mdoc `PixelSpacing` field (in Ångström)
